@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rentcars
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: rentcars
+  template:
+    metadata:
+      labels:
+        app: rentcars
+    spec:
+      containers:
+        - image: amine261299/rentcars
+          imagePullPolicy: IfNotPresent
+          name: rentcars
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rentmotorbikes
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rentmotorbikes
+  template:
+    metadata:
+      labels:
+        app: rentmotorbikes
+    spec:
+      containers:
+        - image: amine261299/rentmotorbikes
+          imagePullPolicy: IfNotPresent
+          name: rentmotorbikes
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rentcars
+spec:
+  ports:
+    - nodePort: 31280
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: rentcars
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rentmotorbikes
+spec:
+  ports:
+    - nodePort: 31281
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: rentmotorbikes
+  type: LoadBalancer
